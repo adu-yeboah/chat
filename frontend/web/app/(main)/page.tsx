@@ -1,7 +1,7 @@
 import Sidechats from '@/components/sidechats';
 import Textbox from '@/components/textbox';
 import Headerbar from '@/components/ui/headerbar';
-import { messages, otherUser } from '@/constants';
+import { messages } from '@/constants';
 import React from 'react';
 
 

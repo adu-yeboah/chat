@@ -1,5 +1,6 @@
 import { currentUser, otherUser } from '@/constants'
 import React from 'react'
+import Chatui from './ui/chatui'
 
 export default function Sidechats() {
     return (
@@ -19,8 +20,11 @@ export default function Sidechats() {
 
                 <div className="space-y-2">
                     <h3 className="text-sm text-gray-400">Recent</h3>
+                    <Chatui />
+                    <Chatui />
+                    <Chatui />
 
-                   
+                   <Chatui />
 
                     {/* Add more users as needed */}
                 </div>
