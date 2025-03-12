@@ -23,7 +23,7 @@ const RegisterPage: React.FC = () => {
           </p>
         </div>
         <form className="mt-8 space-y-6">
-          <div className="rounded-md shadow-sm -space-y-px">
+          <div className="rounded-md -space-y-px">
             <div className="mb-4">
               <label htmlFor="email" className="text-sm font-medium text-gray-700">
                 Email
