@@ -10,7 +10,7 @@ export default function RootLayout({
         <html lang="en">
             <body>
             <Sidebar />
-                <main className='bg-lightGrey ml-[50px]'>
+                <main className='bg-gray-900 ml-[50px]'>
                     {children}
                 </main>
             </body>

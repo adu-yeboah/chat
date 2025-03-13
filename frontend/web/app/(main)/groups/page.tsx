@@ -2,6 +2,10 @@ import React from 'react'
 
 export default function page() {
   return (
-    <div>page</div>
+    <>
+        <div className="h-screen flex items-center justify-center">
+            
+        </div>
+     </>
   )
 }

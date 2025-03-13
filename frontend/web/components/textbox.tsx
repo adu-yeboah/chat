@@ -22,14 +22,14 @@ export default function Textbox() {
                         onChange={(e) => setMessage(e.target.value)}
                         className="flex-1 p-4 bg-gray-700 text-white focus:outline-none"
                     />
-                    <div className="flex items-center space-x-2 pr-3">
-                        <button className="text-gray-400 hover:text-white">
+                    <div className="flex items-center space-x-4 pr-3">
+                        <button className="text-gray-400 cursor-pointer hover:text-white">
                             <FaSmile size={20} />
                         </button>
-                        <button className="text-gray-400 hover:text-white">
+                        <button className="text-gray-400 cursor-pointer hover:text-white">
                             <FaLink size={20} />
                         </button>
-                        <button className="text-gray-400 hover:text-white">
+                        <button className="text-gray-400 cursor-pointer hover:text-white">
                             <FaImage size={20} />
                         </button>
                         <button
