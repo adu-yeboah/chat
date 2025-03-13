@@ -10,7 +10,7 @@ import { RiContactsLine } from "react-icons/ri";
 export default function Sidebar() {
     return (
         <>
-            <div className="fixed h-full w-[50px] top-0 left-0 bg-gray-800">
+            <div className="fixed h-full w-[50px] top-0 left-0 bg-gray-900 shadow-lg">
                 <div className="flex flex-col justify-between h-full items-center px-4 py-2.5 shadow">
 
                     {/* LOGO */}
