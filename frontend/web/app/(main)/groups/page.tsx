@@ -1,22 +1,9 @@
 "use client"
 import React, { useState, useEffect } from 'react';
-import Head from 'next/head';
 import { useRouter } from 'next/navigation';
-import Sidechats from '@/components/sidechats';
+import { Group } from '@/types/groups';
+import GroupsSidechats from '@/components/groupsSidechats';
 
-// Group interface definition
-interface Group {
-  id: string;
-  name: string;
-  description: string;
-  avatar: string;
-  createdBy: string;
-  createdAt: string;
-  members: number;
-  isPublic: boolean;
-  messagesCount: number;
-  lastActive: string;
-}
 
 export default function Page() {
   const router = useRouter();
@@ -68,8 +55,9 @@ export default function Page() {
   return (
     <>
       <div className="flex h-screen bg-gray-900 text-white">
-        <Sidechats />
-       
+        <GroupsSidechats />
+
+      
       </div>
     </>
   );
