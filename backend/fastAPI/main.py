@@ -4,11 +4,18 @@ from sqlalchemy.orm import Session
 from typing import List, Dict
 import aiofiles # type: ignore
 from datetime import datetime
+from config import db
 from config.db import get_db, Base, engine
 from models.models import User, Message, Group 
 from schemas.schemas import UserCreate, User as UserSchema, MessageCreate, Message as MessageSchema, Token
 from utils.auth import get_password_hash, verify_password, create_access_token, get_current_user
 import os
+from dotenv import load_dotenv
+
+# Load environment variables once at startup
+env_path = os.path.join(os.path.dirname(__file__), "..", ".env")
+load_success = load_dotenv(env_path, verbose=True)
+
 
 app = FastAPI()
 Base.metadata.create_all(bind=engine)

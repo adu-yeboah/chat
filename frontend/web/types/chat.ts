@@ -29,3 +29,8 @@ export interface User extends UserBase {
   status: "online" | "offline";
   last_seen: string; 
 }
+
+export interface Token {
+  access_token: string;
+  token_type: string; // Typically "bearer"
+}
