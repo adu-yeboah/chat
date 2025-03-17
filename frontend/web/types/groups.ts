@@ -1,12 +1,18 @@
-export type Group = {
-  id: string;
+import { User } from "./chat";
+import { Message } from "./message";
+
+export interface Group {
+  id: number;
   name: string;
-  description: string;
-  avatar: string;
-  createdBy: string;
-  createdAt: string;
-  members: number;
-  isPublic: boolean;
-  messagesCount: number;
-  lastActive: string;
+  creator_id: number;
+  messages?: Message[]; 
+  members?: GroupMember[]; 
+}
+
+//GroupMember type
+export interface GroupMember {
+  id: number;
+  user_id: number;
+  group_id: number;
+  user?: User; 
 }

@@ -1,8 +1,7 @@
 export interface User {
-    id: string;
+    id: number | string;
     name: string;
     avatar: string;
-    status?: 'active' | 'offline';
   }
   
   export interface Message {
@@ -12,3 +11,21 @@ export interface User {
     timestamp: string;
     isSentByCurrentUser?: boolean;
   }
+
+// Base User type 
+export interface UserBase {
+  username: string;
+  email: string;
+}
+
+// User creation type 
+export interface UserCreate extends UserBase {
+  password: string;
+}
+
+// Full User type 
+export interface User extends UserBase {
+  id: number | string;
+  status: "online" | "offline";
+  last_seen: string; 
+}

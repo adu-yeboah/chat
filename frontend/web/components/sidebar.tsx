@@ -1,9 +1,9 @@
 "use client"
-import Image from 'next/image';
 import Link from 'next/link'
 import React from 'react'
 import { FaUser } from "react-icons/fa6";
 import { IoSettingsOutline } from "react-icons/io5";
+import { PiChatsDuotone } from 'react-icons/pi';
 import { RiGroupLine } from "react-icons/ri";
 import { RiContactsLine } from "react-icons/ri";
 
@@ -15,25 +15,26 @@ export default function Sidebar() {
 
                     {/* LOGO */}
                     <Link href="/" className="h-8 w-8 relative mt-7">
-                        <Image alt='logo' src="/logo.png" layout='fill' objectFit='cover' />
+                        <PiChatsDuotone size={30} className="opacity-50" />
+
                     </Link>
 
                     {/* navigation */}
                     <div className="flex flex-col items-center justify-center gap-10">
                         <Link className='p-2' href={"/user"}>
-                            <FaUser size={23} className='text-white'/>
+                            <FaUser size={23} className='text-white' />
                         </Link>
 
                         <Link className='p-2' href={"/groups"}>
-                            <RiGroupLine size={23} className='text-white'/>
+                            <RiGroupLine size={23} className='text-white' />
                         </Link>
 
                         <Link className='p-2' href={"/contacts"}>
-                            <RiContactsLine size={23} className='text-white'/>
+                            <RiContactsLine size={23} className='text-white' />
                         </Link>
 
                         <Link className='p-2' href={"/settings"}>
-                            <IoSettingsOutline size={23} className='text-white'/>
+                            <IoSettingsOutline size={23} className='text-white' />
                         </Link>
 
                     </div>
