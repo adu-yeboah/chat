@@ -15,7 +15,7 @@ export interface User {
 // Base User type 
 export interface UserBase {
   username: string;
-  email: string;
+  email?: string;
 }
 
 // User creation type 

@@ -1,5 +1,6 @@
 import Sidebar from "@/components/sidebar";
 import "../../styles/globals.css"
+import { AuthContextProvider } from "@/context/authContext";
 
 export default function RootLayout({
     children,
@@ -9,9 +10,11 @@ export default function RootLayout({
     return (
         <html lang="en">
             <body>
-            <Sidebar />
+                <Sidebar />
                 <main className='bg-gray-900 ml-[50px]'>
-                    {children}
+                    <AuthContextProvider>
+                        {children}
+                    </AuthContextProvider>
                 </main>
             </body>
         </html>

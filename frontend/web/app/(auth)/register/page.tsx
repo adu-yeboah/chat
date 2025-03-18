@@ -1,29 +1,43 @@
-import React, { FormEvent } from "react";
+"use client";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { RiLockPasswordLine, RiUserSmileLine } from "react-icons/ri";
 import { AiTwotoneMail } from "react-icons/ai";
+import { useAuth } from "@/context/authContext";
+import { UserCreate } from "@/types/chat";
 
 const RegisterPage: React.FC = () => {
-  const handleSubmit = (e: FormEvent) => {
+  const { setPayload, register } = useAuth();
+
+  // Explicitly defining types
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  const [username, setUsername] = useState<string>("");
+
+  useEffect(() => {
+    setPayload((prev) => ({
+      ...prev,
+      username: username,
+      password: password,
+      email: email,
+    }));
+  }, [email, password, setPayload]);
+
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle form submission logic here
-    console.log("Form submitted");
+    register();
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
       <div className="max-w-md w-full space-y-8 p-8 bg-white rounded-lg shadow">
         <div className="text-center">
-          <div className="flex justify-center items-center mb-4">
-
-          </div>
           <h2 className="text-3xl font-extrabold text-gray-900">Register</h2>
-          <p className="mt-2 text-sm text-gray-600">
-            Get your account now.
-          </p>
+          <p className="mt-2 text-sm text-gray-600">Get your account now.</p>
         </div>
-        <form className="mt-8 space-y-6">
+        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           <div className="rounded-md -space-y-px">
+            {/* Email Input */}
             <div className="mb-4">
               <label htmlFor="email" className="text-sm font-medium text-gray-700">
                 Email
@@ -39,16 +53,19 @@ const RegisterPage: React.FC = () => {
                   required
                   className="appearance-none rounded-md relative block w-full p-3 pl-10 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-purple-500 focus:border-purple-500 focus:z-10 sm:text-sm"
                   placeholder="Enter Email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                 />
               </div>
             </div>
+
+            {/* Username Input */}
             <div className="mb-4">
               <label htmlFor="username" className="text-sm font-medium text-gray-700">
                 Username
               </label>
               <div className="mt-1 relative rounded-md shadow-sm">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-
                   <RiUserSmileLine size={20} className="text-black" />
                 </div>
                 <input
@@ -58,9 +75,13 @@ const RegisterPage: React.FC = () => {
                   required
                   className="appearance-none rounded-md relative block w-full p-3 pl-10 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-purple-500 focus:border-purple-500 focus:z-10 sm:text-sm"
                   placeholder="Enter Username"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
                 />
               </div>
             </div>
+
+            {/* Password Input */}
             <div>
               <label htmlFor="password" className="text-sm font-medium text-gray-700">
                 Password
@@ -76,6 +97,8 @@ const RegisterPage: React.FC = () => {
                   required
                   className="appearance-none rounded-md relative block w-full p-3 pl-10 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-purple-500 focus:border-purple-500 focus:z-10 sm:text-sm"
                   placeholder="Enter Password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)} // Fixed onChange
                 />
               </div>
             </div>
@@ -91,9 +114,9 @@ const RegisterPage: React.FC = () => {
           </div>
         </form>
         <p className="mt-2 text-center text-sm text-gray-600">
-          By registering you agree to the Chatvia{" "}
-          <Link href="/terms" className="font-medium text-purple-600 hover:text-purple-500">
-            Terms of Use
+          have have an account? {" "}
+          <Link href="/login" className="font-medium text-purple-600 hover:text-purple-500">
+            Login
           </Link>
         </p>
       </div>

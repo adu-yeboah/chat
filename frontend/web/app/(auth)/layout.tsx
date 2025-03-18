@@ -1,5 +1,6 @@
 import React from 'react'
 import "../../styles/globals.css"
+import { AuthContextProvider } from '@/context/authContext';
 
 export default function AuthLayout({
     children,
@@ -9,7 +10,9 @@ export default function AuthLayout({
     return (
         <html lang="en">
             <body>
-                {children}
+                <AuthContextProvider>
+                    {children}
+                </AuthContextProvider>
             </body>
         </html>
     )
