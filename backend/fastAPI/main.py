@@ -11,14 +11,28 @@ from schemas.schemas import UserCreate, User as UserSchema, MessageCreate, Messa
 from utils.auth import get_password_hash, verify_password, create_access_token, get_current_user
 import os
 from dotenv import load_dotenv
+from fastapi.middleware.cors import CORSMiddleware
+
 
 # Load environment variables once at startup
 env_path = os.path.join(os.path.dirname(__file__), "..", ".env")
 load_success = load_dotenv(env_path, verbose=True)
 
 
+
 app = FastAPI()
 Base.metadata.create_all(bind=engine)
+
+
+# Enable CORS (Adjust allow_origins for security)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000"],  # Change '*' to this for security
+    allow_credentials=True,
+    allow_methods=["*"],  # Allow all HTTP methods
+    allow_headers=["*"],  # Allow all headers
+)
+
 
 # WebSocket connections
 active_connections: Dict[int, List[WebSocket]] = {}
