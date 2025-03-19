@@ -27,10 +27,10 @@ Base.metadata.create_all(bind=engine)
 # Enable CORS (Adjust allow_origins for security)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],  # Change '*' to this for security
+    allow_origins=["http://localhost:3000"],
     allow_credentials=True,
-    allow_methods=["*"],  # Allow all HTTP methods
-    allow_headers=["*"],  # Allow all headers
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 
@@ -154,8 +154,6 @@ async def call_endpoint(websocket: WebSocket, call_id: str):
     try:
         while True:
             data = await websocket.receive_json()
-            # Handle WebRTC signaling messages (offer, answer, ICE candidates)
-            # Broadcast to other call participants
             pass
     except Exception:
         pass

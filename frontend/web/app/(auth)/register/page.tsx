@@ -5,14 +5,18 @@ import { RiLockPasswordLine, RiUserSmileLine } from "react-icons/ri";
 import { AiTwotoneMail } from "react-icons/ai";
 import { useAuth } from "@/context/authContext";
 import { UserCreate } from "@/types/chat";
+// import { useFlashMessage } from "@/lib/FlashMessage";
+import { useFlashMessage } from "flashmessage-js";
 
 const RegisterPage: React.FC = () => {
-  const { setPayload, register } = useAuth();
+  const { setPayload, register, message, error } = useAuth();
 
   // Explicitly defining types
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [username, setUsername] = useState<string>("");
+
+  const { showFlashMessage } = useFlashMessage();
 
   useEffect(() => {
     setPayload((prev) => ({
@@ -23,10 +27,14 @@ const RegisterPage: React.FC = () => {
     }));
   }, [email, password, setPayload]);
 
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     register();
+    message && showFlashMessage(message as string, "info");
+    error && showFlashMessage(error as string, "error");
   };
+
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
@@ -35,6 +43,7 @@ const RegisterPage: React.FC = () => {
           <h2 className="text-3xl font-extrabold text-gray-900">Register</h2>
           <p className="mt-2 text-sm text-gray-600">Get your account now.</p>
         </div>
+
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           <div className="rounded-md -space-y-px">
             {/* Email Input */}

@@ -2,15 +2,19 @@
 import React, { FormEvent, useState } from "react";
 import Link from "next/link";
 import { useAuth } from "@/context/authContext";
+import { useFlashMessage } from "flashmessage-js";
 
 const SignInPage: React.FC = () => {
-  const { login } = useAuth();
+  const { showFlashMessage } = useFlashMessage();
+  const { login, message, error } = useAuth();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     login(username, password)
+    message && showFlashMessage(message as string, "info");
+    error && showFlashMessage(error as string, "error");
   };
 
   return (
@@ -29,7 +33,7 @@ const SignInPage: React.FC = () => {
                 name="username"
                 type="text"
                 required
-                className="w-full px-3 py-2 border rounded-md"
+                className="appearance-none rounded-md relative block w-full p-3 pl-10 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-purple-500 focus:border-purple-500 focus:z-10 sm:text-sm"
                 placeholder="Enter Username"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
@@ -42,7 +46,7 @@ const SignInPage: React.FC = () => {
                 name="password"
                 type="password"
                 required
-                className="w-full px-3 py-2 border rounded-md"
+                className="appearance-none rounded-md relative block w-full p-3 pl-10 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-purple-500 focus:border-purple-500 focus:z-10 sm:text-sm"
                 placeholder="Enter Password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}

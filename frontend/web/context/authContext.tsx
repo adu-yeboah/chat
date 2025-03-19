@@ -3,64 +3,68 @@ import { instance } from "@/service/api";
 import { AuthContextType } from "@/types/auth";
 import { Token, User, UserCreate } from "@/types/chat";
 import React, { createContext, useContext, useState, ReactNode } from "react";
+import Cookies from "js-cookie";
+import { useRouter } from "next/navigation";
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
-    const [payload, setPayload] = useState<UserCreate>()
+    const [payload, setPayload] = useState<UserCreate>();
     const [user, setUser] = useState<User | null>(null);
     const [token, setToken] = useState<string | null>(null);
+    const [message, setMessage] = useState<string>();
+    const [error, setError] = useState<string | null>(null);
 
-    // Register user
-    async function registerUser(): Promise<User> {
-        try {
-            const response = await instance.post("/register", payload);
-            return response.data;
-        } catch (error: any) {
-            throw new Error(error.response?.data?.detail || "Registration failed");
-        }
-    }
+    const router = useRouter()
 
-    // Login user
-    async function loginUser(username: string, password: string): Promise<Token> {
-        try {
-            const response = await instance.post<Token>("/token", new URLSearchParams({ username, password }));
-            return response.data;
-        } catch (error: any) {
-            throw new Error(error.response?.data?.detail || "Login failed");
+    const handleError = (err: any) => {
+        if (err.response && err.response.data && err.response.data.detail) {
+            setError(err.response.data.detail);
+        } else if (err.message) {
+            setError("Network error: " + err.message);
+        } else {
+            setError("An unexpected error occurred.");
         }
-    }
-
-    const register = async () => {
-        try {
-            const newUser = await registerUser();
-            setUser(newUser);
-            console.log("df");
-            
-        } catch (error) {
-            console.error("Registration error:", error);
-            throw error;
-        }
+        console.error("Error:", err);
     };
 
-    const login = async (username: string, password: string) => {
-        try {
-            const tokenData = await loginUser(username, password);
-            setToken(tokenData.access_token);
-            localStorage.setItem("token", tokenData.access_token);
+    // Register user
+    const register = async () => {
+        if (!payload) return;
 
-            const userResponse = await instance.get<User>("/users/me");
-            setUser(userResponse.data);
-        } catch (error) {
-            console.error("Login error:", error);
-            throw error;
-        }
+        await instance.post("/register", payload)
+            .then(response => {
+                setUser(response.data);
+                setMessage(response.data.detail);
+                setError(null);
+            })
+            .catch(handleError);
+    };
+
+    // Login user
+    const login = async (username: string, password: string) => {
+        await instance.post<Token>("/token", new URLSearchParams({ username, password }))
+            .then(async response => {
+                const tokenData = response.data;
+                setToken(tokenData.access_token);
+                Cookies.set("token", tokenData.access_token);
+
+                return instance.get<User>("/users/me");
+            })
+            .then(response => {
+                setUser(response.data);
+                setMessage("Login Successfully");
+                setError(null);
+                router.push("/")
+            })
+            .catch(handleError);
     };
 
     const logout = () => {
         setUser(null);
         setToken(null);
-        localStorage.removeItem("token");
+        Cookies.remove("token");
+        setError(null);
     };
 
     const isAuthenticated = !!token;
@@ -68,12 +72,13 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
     const value: AuthContextType = {
         user,
         token,
+        message,
+        error,
         setPayload,
         register,
         login,
         logout,
         isAuthenticated,
-
     };
 
     return (
@@ -83,7 +88,6 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
     );
 };
 
-// Custom hook for using AuthContext
 export const useAuth = (): AuthContextType => {
     const context = useContext(AuthContext);
     if (!context) {
