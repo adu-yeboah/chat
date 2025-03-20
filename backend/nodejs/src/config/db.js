@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 require("dotenv").config();
 
-const mongoURI = process.env.MONGO_URI || "mongodb://localhost:27017/chat-app";
+const mongoURI = process.env.DATABASE_URL;
 
 mongoose.connect(mongoURI, {
   useNewUrlParser: true,

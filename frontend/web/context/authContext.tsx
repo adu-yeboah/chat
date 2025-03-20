@@ -43,7 +43,11 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
 
     // Login user
     const login = async (username: string, password: string) => {
-        await instance.post<Token>("/token", new URLSearchParams({ username, password }))
+        const payload = {
+            username,
+            password
+        }
+        await instance.post<Token>("/login", payload)
             .then(async response => {
                 const tokenData = response.data;
                 setToken(tokenData.access_token);

@@ -1,5 +1,5 @@
 "use client";
-import React, { FormEvent, useState } from "react";
+import React, { FormEvent, useEffect, useState } from "react";
 import Link from "next/link";
 import { useAuth } from "@/context/authContext";
 import { useFlashMessage } from "flashmessage-js";
@@ -7,15 +7,26 @@ import { useFlashMessage } from "flashmessage-js";
 const SignInPage: React.FC = () => {
   const { showFlashMessage } = useFlashMessage();
   const { login, message, error } = useAuth();
-  const [username, setUsername] = useState("");
+  const [username, setUsername] = useState(""); 
   const [password, setPassword] = useState("");
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    login(username, password)
-    message && showFlashMessage(message as string, "info");
-    error && showFlashMessage(error as string, "error");
+    await login(username, password)
   };
+
+  useEffect(() => {
+    if (message) {
+      showFlashMessage(message as string, "info");
+    }
+    if (true) {
+      showFlashMessage("error" as string, "error");
+    }
+    console.log(error, message);
+    
+  }, [message, error]);
+
+  showFlashMessage("error", "error");
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
@@ -63,7 +74,7 @@ const SignInPage: React.FC = () => {
           </div>
         </form>
         <p className="mt-2 text-center text-sm text-gray-600">
-          Don’t have an account? <Link href="/register" className="text-purple-600 hover:text-purple-500">Signup now</Link>
+          Don’t have an account? <Link href="/register" className="text-purple-600 hover:text-purple-500">Signup</Link>
         </p>
       </div>
     </div>

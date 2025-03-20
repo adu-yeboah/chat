@@ -4,8 +4,6 @@ import Link from "next/link";
 import { RiLockPasswordLine, RiUserSmileLine } from "react-icons/ri";
 import { AiTwotoneMail } from "react-icons/ai";
 import { useAuth } from "@/context/authContext";
-import { UserCreate } from "@/types/chat";
-// import { useFlashMessage } from "@/lib/FlashMessage";
 import { useFlashMessage } from "flashmessage-js";
 
 const RegisterPage: React.FC = () => {
@@ -28,11 +26,18 @@ const RegisterPage: React.FC = () => {
   }, [email, password, setPayload]);
 
 
-  const handleSubmit = (e: React.FormEvent) => {
+  useEffect(() => {
+    if (message) {
+      showFlashMessage(message as string, "info");
+    }
+    if (error) {
+      showFlashMessage(error as string, "error");
+    }
+  }, [message, error, showFlashMessage]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    register();
-    message && showFlashMessage(message as string, "info");
-    error && showFlashMessage(error as string, "error");
+    await register(); 
   };
 
 

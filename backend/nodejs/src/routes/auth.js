@@ -10,28 +10,30 @@ router.post("/register", async (req, res) => {
   try {
     const existingUser = await User.findByUsername(username);
     if (existingUser) return res.status(400).json({ detail: "Username already taken" });
-    const user = new User({ username, email, hashed_password: password });
+    const user = new User({ username, email, password: password });
     await user.save();
     res.status(201).json({ id: user._id, username, email });
   } catch (error) {
-    res.status(500).json({ detail: "Registration failed" });
+    res.status(500).json({ detail: error.message });
   }
 });
 
+
 // Login
-router.post("/token", async (req, res) => {
+router.post("/login", async (req, res) => {
   const { username, password } = req.body;
   try {
     const user = await User.findByUsername(username);
-    if (!user || !(await bcrypt.compare(password, user.hashed_password))) {
-      return res.status(401).json({ detail: "Invalid credentials" });
+    if (!user || !(await user.comparePassword(password))) {
+      return res.status(401).json({ detail: "Invalid username or password" });
     }
-    const token = jwt.sign({ sub: user.username }, process.env.JWT_SECRET, {
-      expiresIn: "30m",
+    const token = jwt.sign({ id: user._id, username: user.username }, process.env.JWT_SECRET, {
+      expiresIn: "1h",
     });
-    res.json({ access_token: token, token_type: "bearer" });
+    res.status(200).json({ access_token: token });
   } catch (error) {
-    res.status(500).json({ detail: "Login failed" });
+    console.error(error);
+    res.status(500).json({ detail: "Server error: " + error.message });
   }
 });
 

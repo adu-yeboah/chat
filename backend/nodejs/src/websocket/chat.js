@@ -1,4 +1,3 @@
-// src/websocket/chat.js
 const WebSocket = require("ws");
 const User = require("../models/user");
 const Message = require("../models/message");
