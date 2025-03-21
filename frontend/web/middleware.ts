@@ -6,7 +6,8 @@ export function middleware(req: NextRequest) {
   const token = req.cookies.get("token")?.value; 
   const { pathname } = req.nextUrl;
 
-  if (token) {
+  const authPaths = ["/login", "register"]
+  if (token && authPaths.includes(pathname)) {
     console.log("Authenticated user trying to access auth routes, redirecting to /");
     return NextResponse.redirect(new URL("/", req.url));
   }
@@ -16,7 +17,7 @@ export function middleware(req: NextRequest) {
   // If no token exists and the user tries to access protected routes, redirect to login
   const protectedPaths = ["/"];
   if (!token && protectedPaths.includes(pathname)) {
-    return NextResponse.redirect(new URL("/login", req.url)); 
+    return NextResponse.redirect(new URL("/register", req.url)); 
   }
 
   return NextResponse.next(); 

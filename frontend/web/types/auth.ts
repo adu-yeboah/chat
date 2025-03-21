@@ -8,7 +8,8 @@ export interface AuthContextType {
     register: () => Promise<void>;
     login: (username: string, password: string) => Promise<void>;
     logout: () => void;
+    getMe: () => void;
     isAuthenticated: boolean;
-    error: string | null;
-    message: string | undefined;
+    error: string;
+    message: string;
 }

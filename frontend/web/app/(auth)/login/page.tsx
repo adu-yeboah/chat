@@ -7,26 +7,25 @@ import { useFlashMessage } from "flashmessage-js";
 const SignInPage: React.FC = () => {
   const { showFlashMessage } = useFlashMessage();
   const { login, message, error } = useAuth();
-  const [username, setUsername] = useState(""); 
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    await login(username, password)
+    try {
+      await login(username, password);
+    } catch (err) {
+      showFlashMessage("An unexpected error occurred", "error");
+      console.error(err);
+    }
+    
   };
 
   useEffect(() => {
-    if (message) {
-      showFlashMessage(message as string, "info");
-    }
-    if (true) {
-      showFlashMessage("error" as string, "error");
-    }
-    console.log(error, message);
-    
-  }, [message, error]);
+    message && showFlashMessage(message as string, 'info')
+    error && showFlashMessage(error as string, 'error')
+  }, [message, error])
 
-  showFlashMessage("error", "error");
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
@@ -38,7 +37,9 @@ const SignInPage: React.FC = () => {
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           <div className="space-y-4">
             <div>
-              <label htmlFor="username" className="text-sm font-medium text-gray-700">Username</label>
+              <label htmlFor="username" className="text-sm font-medium text-gray-700">
+                Username
+              </label>
               <input
                 id="username"
                 name="username"
@@ -51,7 +52,9 @@ const SignInPage: React.FC = () => {
               />
             </div>
             <div>
-              <label htmlFor="password" className="text-sm font-medium text-gray-700">Password</label>
+              <label htmlFor="password" className="text-sm font-medium text-gray-700">
+                Password
+              </label>
               <input
                 id="password"
                 name="password"
@@ -67,14 +70,17 @@ const SignInPage: React.FC = () => {
           <div>
             <button
               type="submit"
-              className="w-full py-2 px-4 text-sm font-medium rounded-md text-white bg-purple-600 hover:bg-purple-700"
+              className="w-full py-2 px-4 text-sm font-medium cursor-pointer rounded-md text-white bg-purple-600 hover:bg-purple-700"
             >
               Sign in
             </button>
           </div>
         </form>
         <p className="mt-2 text-center text-sm text-gray-600">
-          Don’t have an account? <Link href="/register" className="text-purple-600 hover:text-purple-500">Signup</Link>
+          Don’t have an account?{" "}
+          <Link href="/register" className="text-purple-600 hover:text-purple-500">
+            Signup
+          </Link>
         </p>
       </div>
     </div>

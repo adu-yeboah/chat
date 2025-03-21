@@ -1,6 +1,6 @@
 export interface User {
     id: number | string;
-    name: string;
+    username: string;
     avatar: string;
   }
   
@@ -26,6 +26,8 @@ export interface UserCreate extends UserBase {
 // Full User type 
 export interface User extends UserBase {
   id: number | string;
+  username: string;
+  email: string;
   status: "online" | "offline";
   last_seen: string; 
 }

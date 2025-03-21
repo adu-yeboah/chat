@@ -28,16 +28,16 @@ const RegisterPage: React.FC = () => {
 
   useEffect(() => {
     if (message) {
-      showFlashMessage(message as string, "info");
+      showFlashMessage(message || "kj", "info");
     }
     if (error) {
-      showFlashMessage(error as string, "error");
+      showFlashMessage(error || "Registration failed", "error");
     }
-  }, [message, error, showFlashMessage]);
+  }, [message, error]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    await register(); 
+    await register();
   };
 
 

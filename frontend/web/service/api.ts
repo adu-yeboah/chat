@@ -15,7 +15,7 @@ instance.interceptors.request.use(
   async function (config) {
     try {
       if (typeof window !== "undefined") {
-        const token = Cookies.get("mkey");
+        const token = Cookies.get("token");
         if (token) {
           config.headers["Authorization"] = `Bearer ${token}`;
         }

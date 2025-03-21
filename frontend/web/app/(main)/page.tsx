@@ -1,12 +1,18 @@
+"use client"
 import Sidechats from '@/components/sidechats';
 import Textbox from '@/components/textbox';
 import Headerbar from '@/components/ui/headerbar';
 import { messages } from '@/constants';
-import React from 'react';
+import { useAuth } from '@/context/authContext';
+import React, { useEffect } from 'react';
 
 
 const Home: React.FC = () => {
-  // Mock data for demonstration
+  const {user, getMe} = useAuth()
+
+  useEffect(() => {
+    getMe()
+  }, [])
 
   return (
     <div className="flex h-screen bg-gray-900 text-white">

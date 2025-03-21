@@ -2,6 +2,7 @@
 import React from 'react'
 import "../../styles/globals.css"
 import { AuthContextProvider } from '@/context/authContext';
+// import { FlashMessageProvider } from '@/lib/flash';
 import { FlashMessageProvider } from 'flashmessage-js';
 
 export default function AuthLayout({

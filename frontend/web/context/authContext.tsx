@@ -12,8 +12,8 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
     const [payload, setPayload] = useState<UserCreate>();
     const [user, setUser] = useState<User | null>(null);
     const [token, setToken] = useState<string | null>(null);
-    const [message, setMessage] = useState<string>();
-    const [error, setError] = useState<string | null>(null);
+    const [message, setMessage] = useState<string>("");
+    const [error, setError] = useState<string>("");
 
     const router = useRouter()
 
@@ -36,7 +36,7 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
             .then(response => {
                 setUser(response.data);
                 setMessage(response.data.detail);
-                setError(null);
+                setError("");
             })
             .catch(handleError);
     };
@@ -52,23 +52,27 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
                 const tokenData = response.data;
                 setToken(tokenData.access_token);
                 Cookies.set("token", tokenData.access_token);
-
-                return instance.get<User>("/users/me");
-            })
-            .then(response => {
-                setUser(response.data);
-                setMessage("Login Successfully");
-                setError(null);
                 router.push("/")
+                setMessage("Login Successfully");
+                setError("");
             })
             .catch(handleError);
     };
+
+    // get user 
+    const getMe = async () => {
+        instance.get<User>("/users/me")
+            .then(response => {
+                setUser(response.data);
+            })
+
+    }
 
     const logout = () => {
         setUser(null);
         setToken(null);
         Cookies.remove("token");
-        setError(null);
+        setError("");
     };
 
     const isAuthenticated = !!token;
@@ -82,6 +86,7 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
         register,
         login,
         logout,
+        getMe,
         isAuthenticated,
     };
 
