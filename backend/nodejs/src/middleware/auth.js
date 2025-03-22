@@ -7,14 +7,17 @@ const authMiddleware = async (req, res, next) => {
   if (!token) return res.status(401).json({ detail: "No token provided" });
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    const user = await User.findByUsername(decoded.username);
+    const user = await User.findById(decoded.id); 
+    
     if (!user) return res.status(401).json({ detail: "Invalid token" });
     req.user = user;
     next();
   } catch (error) {
+    if (error.name === "TokenExpiredError") {
+      return res.status(401).json({ detail: "Token has expired" });
+    }
     res.status(401).json({ detail: "Invalid token" });
   }
 };
-
 
 module.exports = authMiddleware;

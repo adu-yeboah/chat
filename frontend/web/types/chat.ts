@@ -33,6 +33,7 @@ export interface User extends UserBase {
 }
 
 export interface Token {
+  refresh_token: any;
   access_token: string;
   token_type: string; // Typically "bearer"
 }

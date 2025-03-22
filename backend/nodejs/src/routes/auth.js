@@ -22,18 +22,41 @@ router.post("/register", async (req, res) => {
 // Login
 router.post("/login", async (req, res) => {
   const { username, password } = req.body;
+  console.log(req.body);
+  
   try {
     const user = await User.findByUsername(username);
     if (!user || !(await user.comparePassword(password))) {
       return res.status(401).json({ detail: "Invalid username or password" });
     }
-    const token = jwt.sign({ id: user._id, username: user.username }, process.env.JWT_SECRET, {
+    const accessToken = jwt.sign({ id: user._id, username: user.username }, process.env.JWT_SECRET, {
       expiresIn: "1h",
     });
-    res.status(200).json({ access_token: token });
+    const refreshToken = jwt.sign({ id: user._id },process.env.JWT_REFRESH_SECRET, {
+      expiresIn: "7d", 
+    });
+    res.status(200).json({ access_token: accessToken, refresh_token: refreshToken });
   } catch (error) {
     console.error(error);
     res.status(500).json({ detail: "Server error: " + error.message });
+  }
+});
+
+
+// Refresh Token
+router.post("/refresh", async (req, res) => {
+  const { refresh_token } = req.body;
+  if (!refresh_token) return res.status(401).json({ detail: "No refresh token provided" });
+  try {
+    const decoded = jwt.verify(refresh_token, process.env.JWT_REFRESH_SECRET);
+    const user = await User.findById(decoded.id);
+    if (!user) return res.status(401).json({ detail: "Invalid refresh token" });
+    const newAccessToken = jwt.sign({ id: user._id, username: user.username }, process.env.JWT_SECRET, {
+      expiresIn: "1h",
+    });
+    res.status(200).json({ access_token: newAccessToken });
+  } catch (error) {
+    res.status(401).json({ detail: "Invalid or expired refresh token" });
   }
 });
 

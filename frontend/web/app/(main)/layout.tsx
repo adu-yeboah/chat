@@ -1,6 +1,8 @@
+"use client"
 import Sidebar from "@/components/sidebar";
 import "../../styles/globals.css"
 import { AuthContextProvider } from "@/context/authContext";
+import { FlashMessageProvider } from "flashmessage-js";
 
 export default function RootLayout({
     children,
@@ -13,8 +15,12 @@ export default function RootLayout({
                 <Sidebar />
                 <main className='bg-gray-900 ml-[50px]'>
                     <AuthContextProvider>
-                        {children}
+                        <FlashMessageProvider>
+                            {children}
+                        </FlashMessageProvider>
                     </AuthContextProvider>
+
+
                 </main>
             </body>
         </html>

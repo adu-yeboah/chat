@@ -3,6 +3,7 @@ const cors = require("cors");
 const multer = require("multer");
 const path = require("path");
 const authRoutes = require("./routes/auth");
+const groupRoutes = require("./routes/group");
 const authMiddleware = require("./middleware/auth");
 const Group = require("./models/group");
 const GroupMember = require("./models/groupMember");
@@ -20,6 +21,8 @@ app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
 
 // Routes
 app.use(authRoutes);
+app.use(groupRoutes);
+
 
 // Protected Routes
 app.get("/users/me", authMiddleware, (req, res) => {

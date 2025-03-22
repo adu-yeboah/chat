@@ -3,6 +3,7 @@ import React, { FormEvent, useEffect, useState } from "react";
 import Link from "next/link";
 import { useAuth } from "@/context/authContext";
 import { useFlashMessage } from "flashmessage-js";
+import { RiLockPasswordLine, RiUserSmileLine } from "react-icons/ri";
 
 const SignInPage: React.FC = () => {
   const { showFlashMessage } = useFlashMessage();
@@ -18,7 +19,7 @@ const SignInPage: React.FC = () => {
       showFlashMessage("An unexpected error occurred", "error");
       console.error(err);
     }
-    
+
   };
 
   useEffect(() => {
@@ -40,31 +41,45 @@ const SignInPage: React.FC = () => {
               <label htmlFor="username" className="text-sm font-medium text-gray-700">
                 Username
               </label>
-              <input
-                id="username"
-                name="username"
-                type="text"
-                required
-                className="appearance-none rounded-md relative block w-full p-3 pl-10 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-purple-500 focus:border-purple-500 focus:z-10 sm:text-sm"
-                placeholder="Enter Username"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-              />
+
+              <div className="mt-1 relative rounded-md shadow-sm">
+
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <RiUserSmileLine size={20} className="text-black" />
+                </div>
+                <input
+                  id="username"
+                  name="username"
+                  type="text"
+                  required
+                  className="appearance-none rounded-md relative block w-full p-3 pl-10 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-purple-500 focus:border-purple-500 focus:z-10 sm:text-sm"
+                  placeholder="Enter Username"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                />
+              </div>
             </div>
             <div>
               <label htmlFor="password" className="text-sm font-medium text-gray-700">
                 Password
               </label>
-              <input
-                id="password"
-                name="password"
-                type="password"
-                required
-                className="appearance-none rounded-md relative block w-full p-3 pl-10 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-purple-500 focus:border-purple-500 focus:z-10 sm:text-sm"
-                placeholder="Enter Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
+
+              <div className="mt-1 relative rounded-md shadow-sm">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <RiLockPasswordLine size={20} className="text-black" />
+                </div>
+                <input
+                  id="password"
+                  name="password"
+                  type="password"
+                  required
+                  className="appearance-none rounded-md relative block w-full p-3 pl-10 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-purple-500 focus:border-purple-500 focus:z-10 sm:text-sm"
+                  placeholder="Enter Password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+              </div>
+
             </div>
           </div>
           <div>

@@ -17,7 +17,7 @@ export function middleware(req: NextRequest) {
   // If no token exists and the user tries to access protected routes, redirect to login
   const protectedPaths = ["/"];
   if (!token && protectedPaths.includes(pathname)) {
-    return NextResponse.redirect(new URL("/register", req.url)); 
+    return NextResponse.redirect(new URL("/login", req.url)); 
   }
 
   return NextResponse.next(); 
