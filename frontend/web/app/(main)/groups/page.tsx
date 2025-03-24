@@ -17,7 +17,6 @@ export default function Page() {
     <>
       <div className="flex h-screen bg-gray-900 text-white">
         <GroupsSidechats />
-
         <EmptyChat />
       </div>
     </>

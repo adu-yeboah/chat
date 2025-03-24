@@ -1,5 +1,6 @@
 import { Dispatch, SetStateAction } from "react";
-import { User, UserCreate } from "./chat";
+import { User, UserCreate} from "./chat";
+import { Message } from "./message";
 
 export interface AuthContextType {
     user: User | null;
@@ -12,4 +13,8 @@ export interface AuthContextType {
     isAuthenticated: boolean;
     error: string;
     message: string;
+    messages: Message[];
+    sendMessage: () => void;
+    isConnected: boolean;
+    onlineUsers: User[];
 }

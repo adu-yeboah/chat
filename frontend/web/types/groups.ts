@@ -2,7 +2,7 @@ import { User } from "./chat";
 import { Message } from "./message";
 
 export interface Group {
-  id: number;
+  id: number | string;
   name: string;
   creator_id: number;
   messages?: Message[]; 
@@ -16,3 +16,4 @@ export interface GroupMember {
   group_id: number;
   user?: User; 
 }
+

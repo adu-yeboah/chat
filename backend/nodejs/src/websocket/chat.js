@@ -3,8 +3,8 @@ const User = require("../models/user");
 const Message = require("../models/message");
 const GroupMember = require("../models/groupMember");
 
-const activeConnections = new Map(); 
-const typingUsers = new Map(); 
+const activeConnections = new Map();
+const typingUsers = new Map();
 
 function setupWebSocket(server) {
   const wss = new WebSocket.Server({ server });
@@ -47,16 +47,37 @@ function setupWebSocket(server) {
           );
           broadcastTyping(group_id);
         }
+      } else if (action === "get_online_users") {
+        const onlineUserIds = Array.from(activeConnections.keys());
+        const users = await User.find({ _id: { $in: onlineUserIds } }).select(
+          "_id username last_seen status"
+        );
+
+        const onlineUsersData = users.map((user) => ({
+          id: user._id.toString(),
+          username: user.username,
+          last_seen: user.last_seen ? user.last_seen.toISOString() : null,
+          status: user.status,
+        }));
+
+        ws.send(
+          JSON.stringify({
+            type: "online_users",
+            data: { users: onlineUsersData },
+          })
+        );
       }
     });
 
     ws.on("close", () => {
-      activeConnections.set(
-        userId,
-        activeConnections.get(userId).filter((conn) => conn !== ws)
-      );
-      User.updateStatus(userId, "offline");
-      broadcastStatus(userId, "offline");
+      const userConnections = activeConnections.get(userId).filter((conn) => conn !== ws);
+      if (userConnections.length === 0) {
+        activeConnections.delete(userId);
+        User.updateStatus(userId, "offline");
+        broadcastStatus(userId, "offline");
+      } else {
+        activeConnections.set(userId, userConnections);
+      }
     });
   });
 
@@ -105,7 +126,7 @@ function setupWebSocket(server) {
 
   function broadcastStatus(user_id, status) {
     const data = { type: "status", user_id, status };
-    activeConnections.forEach((wsArray, key) => {
+    activeConnections.forEach((wsArray) => {
       wsArray.forEach((ws) => ws.send(JSON.stringify(data)));
     });
   }
@@ -114,3 +135,4 @@ function setupWebSocket(server) {
 }
 
 module.exports = setupWebSocket;
+module.exports.activeConnections = activeConnections; 

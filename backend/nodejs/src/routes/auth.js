@@ -14,7 +14,7 @@ router.post("/register", async (req, res) => {
     await user.save();
     res.status(201).json({ id: user._id, username, email });
   } catch (error) {
-    res.status(500).json({ detail: error.message });
+    res.status(500).json({ detail: error.message });    
   }
 });
 
@@ -22,7 +22,6 @@ router.post("/register", async (req, res) => {
 // Login
 router.post("/login", async (req, res) => {
   const { username, password } = req.body;
-  console.log(req.body);
   
   try {
     const user = await User.findByUsername(username);
@@ -37,7 +36,6 @@ router.post("/login", async (req, res) => {
     });
     res.status(200).json({ access_token: accessToken, refresh_token: refreshToken });
   } catch (error) {
-    console.error(error);
     res.status(500).json({ detail: "Server error: " + error.message });
   }
 });

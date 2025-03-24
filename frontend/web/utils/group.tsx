@@ -1,35 +1,38 @@
 "use client";
 import { instance } from "@/service/api";
-import { useState } from "react";
-import { useAuth } from "@/context/authContext";
+import { useCallback, useState } from "react";
 import { Group } from "@/types/groups";
 
-
-
 export const useGroup = () => {
-  const [groups, setGroups] = useState<Group[] | undefined>(undefined);
+  const [groups, setGroups] = useState<Group[]>();
+  const [onlineUsers, setOnlineUsers] = useState([]); 
   const [message, setMessage] = useState<string>("");
   const [error, setError] = useState<string | undefined>(undefined);
 
-  const { user } = useAuth();
+
+  const handleError = (err: any) => {
+    const errorMessage =
+      err.response?.data?.detail || err.message || "An unexpected error occurred";
+    setError(errorMessage);
+    console.error("Group error:", err);
+    return errorMessage;
+  };
 
   // Get all groups under user
   const getGroups = async () => {
-    if (!user?.id) {
-      setError("User not authenticated");
-      return;
-    }
     try {
-      const response = await instance.get("/group");
-      setGroups(response.data);
+      const response = await instance.get("/groups");
+      setGroups(Array.isArray(response.data.groups) ? response.data.groups : []);
+      setMessage(response.data.detail);
+      setError("");
     } catch (err) {
-      setError(err as string);
+      // handleError(err);
+      setGroups([]);
     }
   };
 
   // Create Group
   const createGroup = async (name: string) => {
-
     const payload = {
       name,
     };
@@ -44,11 +47,29 @@ export const useGroup = () => {
     }
   };
 
+
+
+  // ger online Users
+  const getOnlineUsers = useCallback(async () => {
+    try {
+      const response = await instance.get("/online-users");
+      setOnlineUsers(response.data.users);
+      setMessage(response.data.detail);
+      setError("");
+    } catch (err) {
+      handleError(err);
+      setOnlineUsers([]);
+    }
+  }, []);
+
+  
   return {
     message,
     groups,
+    onlineUsers,
     createGroup,
     getGroups,
-    error, // Expose error state if needed
+    getOnlineUsers,
+    error,
   };
 };

@@ -1,16 +1,17 @@
 export interface User {
-    id: number | string;
-    username: string;
-    avatar: string;
-  }
-  
-  export interface Message {
-    id: string;
-    sender: User;
-    content: string;
-    timestamp: string;
-    isSentByCurrentUser?: boolean;
-  }
+  map(arg0: (u: any) => any): User[];
+  id: number | string;
+  username: string;
+  avatar: string;
+}
+
+export interface Message {
+  id: string;
+  sender: User;
+  content: string;
+  timestamp: string;
+  isSentByCurrentUser?: boolean;
+}
 
 // Base User type 
 export interface UserBase {
@@ -29,7 +30,7 @@ export interface User extends UserBase {
   username: string;
   email: string;
   status: "online" | "offline";
-  last_seen: string; 
+  last_seen: string;
 }
 
 export interface Token {
@@ -37,3 +38,4 @@ export interface Token {
   access_token: string;
   token_type: string; // Typically "bearer"
 }
+

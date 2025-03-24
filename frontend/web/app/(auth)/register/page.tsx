@@ -28,7 +28,7 @@ const RegisterPage: React.FC = () => {
 
   useEffect(() => {
     if (message) {
-      showFlashMessage(message || "kj", "info");
+      showFlashMessage(message, "info");
     }
     if (error) {
       showFlashMessage(error || "Registration failed", "error");

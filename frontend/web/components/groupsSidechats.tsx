@@ -7,34 +7,39 @@ import { useFlashMessage } from "flashmessage-js";
 export default function GroupsSidechats() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [groupName, setGroupName] = useState("");
-  const { createGroup, message } = useGroup();
+  const { createGroup, getGroups, getOnlineUsers, message, error, groups, onlineUsers } = useGroup();
   const { showFlashMessage } = useFlashMessage();
 
-  const handleClick = () => {
-    setIsModalOpen(true);
-  };
+  useEffect(() => {
+    getGroups();
+    getOnlineUsers(); 
+  }, []);
 
+  useEffect(() => {
+    if (message) showFlashMessage(message, "success");
+    if (error) showFlashMessage(error, "error");
+  }, [message, error]);
+
+  const handleClick = () => setIsModalOpen(true);
   const handleClose = () => {
     setIsModalOpen(false);
     setGroupName("");
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: { preventDefault: () => void; }) => {
     e.preventDefault();
     if (!groupName.trim()) {
       showFlashMessage("Group name is required", "error");
       return;
     }
-    createGroup(groupName);
-    showFlashMessage(`Group "${groupName}" created successfully`, "success");
-    // handleClose();
-  };
-
-  useEffect(() => {
-    if (message) {
-      showFlashMessage(message, "success");
+    try {
+      await createGroup(groupName);
+      await getGroups();
+      handleClose();
+    } catch (err) {
+      // Error handled in useGroup
     }
-  }, [message]);
+  };
 
   return (
     <>
@@ -57,17 +62,24 @@ export default function GroupsSidechats() {
         </div>
 
         <div className="space-y-2">
-          <h3 className="text-sm text-gray-400">Recent</h3>
-          <Chatui />
-          <Chatui />
-          <Chatui />
-          <Chatui />
+          {Array.isArray(groups) && groups.length > 0 ? (
+            groups.map((item) => <Chatui data={item} key={item.id} />)
+          ) : (
+            <h3 className="text-sm text-gray-400">Not in any group</h3>
+          )}
+          <div className="mt-4">
+            <h3 className="text-sm text-gray-400">Online Users: {onlineUsers.length}</h3>
+            <ul className="text-white">
+              {onlineUsers.map((userId) => (
+                <li key={userId}>{userId}</li>
+              ))}
+            </ul>
+          </div>
         </div>
       </div>
 
-      {/* Modal for creating a group with transparent overlay */}
       {isModalOpen && (
-        <div className="fixed inset-0 bg-[rgba(55,52,52,0.6)] bg-opacity-10 flex items-center justify-center z-50">
+        <div className="fixed inset-0 bg-[rgba(55,52,52,0.6)] flex items-center justify-center z-50">
           <div className="bg-gray-800 p-6 rounded-lg w-96">
             <h3 className="text-white text-xl mb-4">Create a Group</h3>
             <form onSubmit={handleSubmit}>

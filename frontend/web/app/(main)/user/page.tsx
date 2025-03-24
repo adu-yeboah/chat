@@ -3,54 +3,25 @@ import React, { useState, useEffect } from 'react';
 import Head from 'next/head';
 import { useRouter } from 'next/navigation';
 import { HiMiniUserCircle } from 'react-icons/hi2';
-
-// User interface definition
-interface User {
-  username: string;
-  displayName: string;
-  email: string;
-  bio: string;
-  avatar: string;
-  status: 'online' | 'offline' | 'away';
-  joinedDate: string;
-  messagesSent: number;
-  friendsCount: number;
-}
+import { useAuth } from '@/context/authContext';
 
 export default function page() {
-  const router = useRouter();
 
-
-  // Sample user data (in a real app, this would come from an API)
-  const [user, setUser] = useState<User | null>({
-    username: "yeboah",
-    displayName: 'John Doe',
-    email: 'john@example.com',
-    bio: 'Just a friendly chat enthusiast!',
-    avatar: 'https://via.placeholder.com/150',
-    status: 'online',
-    joinedDate: '2023-01-15',
-    messagesSent: 542,
-    friendsCount: 23,
-  });
-  const [isLoading, setIsLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
-
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    if (user) {
-      setUser({ ...user, [name]: value });
-    }
-  };
+  const { user, getMe } = useAuth()
 
   const handleSave = async () => {
     setIsEditing(false);
-    // In a real app, this would make an API call to save changes
     console.log('Updated user data:', user);
   };
 
+  useEffect(() => {
+    getMe()
+  }, [])
 
+  const handleInputChange = (e: any) => {
+
+  }
   if (!user) {
     return (
       <div className="min-h-screen bg-gray-100 flex items-center justify-center">
@@ -62,8 +33,8 @@ export default function page() {
   return (
     <div className="min-h-screen bg-gray-800">
       <Head>
-        <title>{user.displayName} | Chat App</title>
-        <meta name="description" content={`${user.displayName}'s profile`} />
+        <title>{user?.username} | Chat App</title>
+        <meta name="description" content={`${user?.username}'s profile`} />
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
@@ -79,7 +50,7 @@ export default function page() {
                 <span
                   className={`absolute bottom-0 right-0 h-4 w-4 rounded-full border-2 border-white ${user.status === 'online'
                     ? 'bg-green-500'
-                    : user.status === 'away'
+                    : user.status === 'offline'
                       ? 'bg-yellow-500'
                       : 'bg-gray-500'
                     }`}
@@ -91,12 +62,12 @@ export default function page() {
                     <input
                       type="text"
                       name="displayName"
-                      value={user.displayName}
+                      value={user.username}
                       onChange={handleInputChange}
                       className="text-2xl font-bold text-gray-900 border rounded-md px-2 py-1"
                     />
                   ) : (
-                    <h1 className="text-2xl font-bold text-gray-900">{user.displayName}</h1>
+                    <h1 className="text-2xl font-bold text-gray-900">{user.username}</h1>
                   )}
                   <button
                     onClick={() => isEditing ? handleSave() : setIsEditing(true)}
@@ -114,7 +85,7 @@ export default function page() {
           <div className="p-6">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {/* Bio Section */}
-              <div className="md:col-span-2">
+              {/* <div className="md:col-span-2">
                 <h2 className="text-lg font-semibold text-gray-900 mb-2">About</h2>
                 {isEditing ? (
                   <textarea
@@ -127,7 +98,7 @@ export default function page() {
                 ) : (
                   <p className="text-gray-300">{user.bio}</p>
                 )}
-              </div>
+              </div> */}
 
               {/* Stats Section */}
               <div className="space-y-4">
@@ -138,19 +109,12 @@ export default function page() {
                     <span className="ml-2 text-gray-900 capitalize">{user.status}</span>
                   </div>
                   <div>
-                    <span className="text-sm font-medium text-gray-400">Joined:</span>
+                    <span className="text-sm font-medium text-gray-400">last seen:</span>
                     <span className="ml-2 text-gray-900">
-                      {new Date(user.joinedDate).toLocaleDateString()}
+                      {new Date(user.last_seen).toLocaleDateString()}
                     </span>
                   </div>
-                  <div>
-                    <span className="text-sm font-medium text-gray-400">Messages Sent:</span>
-                    <span className="ml-2 text-gray-900">{user.messagesSent}</span>
-                  </div>
-                  <div>
-                    <span className="text-sm font-medium text-gray-400">Friends:</span>
-                    <span className="ml-2 text-gray-900">{user.friendsCount}</span>
-                  </div>
+
                 </div>
               </div>
             </div>
