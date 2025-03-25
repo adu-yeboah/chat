@@ -1,4 +1,5 @@
 const WebSocket = require("ws");
+const jwt = require("jsonwebtoken"); 
 const User = require("../models/user");
 const Message = require("../models/message");
 const GroupMember = require("../models/groupMember");
@@ -10,12 +11,33 @@ function setupWebSocket(server) {
   const wss = new WebSocket.Server({ server });
 
   wss.on("connection", (ws, req) => {
-    const userId = req.url.split("/")[2];
+    // Extract token from query string or headers
+    const urlParams = new URLSearchParams(req.url.split("?")[1]);
+    const token = urlParams.get("token") || req.headers["authorization"]?.split(" ")[1];
+
+    if (!token) {
+      ws.send(JSON.stringify({ error: "No token provided" }));
+      ws.close();
+      return;
+    }
+
+    // Verify token and extract user ID
+    let userId;
+    try {
+      const decoded = jwt.verify(token, process.env.JWT_SECRET); 
+      userId = decoded.userId; 
+    } catch (err) {
+      ws.send(JSON.stringify({ error: "Invalid or expired token" }));
+      ws.close();
+      return;
+    }
+
     if (!userId) {
       ws.close();
       return;
     }
 
+    // Store WebSocket connection
     if (!activeConnections.has(userId)) activeConnections.set(userId, []);
     activeConnections.get(userId).push(ws);
     User.updateStatus(userId, "online");
@@ -81,6 +103,7 @@ function setupWebSocket(server) {
     });
   });
 
+  // Broadcast functions remain unchanged
   function broadcastMessage(message) {
     const messageData = {
       type: "message",
@@ -125,7 +148,7 @@ function setupWebSocket(server) {
   }
 
   function broadcastStatus(user_id, status) {
-    const data = { type: "status", user_id, status };
+    const data = { type: "status", data: { user_id, status } };
     activeConnections.forEach((wsArray) => {
       wsArray.forEach((ws) => ws.send(JSON.stringify(data)));
     });
@@ -135,4 +158,4 @@ function setupWebSocket(server) {
 }
 
 module.exports = setupWebSocket;
-module.exports.activeConnections = activeConnections; 
+module.exports.activeConnections = activeConnections;
