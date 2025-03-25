@@ -1,35 +1,37 @@
+import { useAuth } from "@/context/authContext";
 import { Message, User } from "@/types/chat";
 import { WebSocketMessage } from "@/types/message";
 import { useEffect, useRef, useState } from "react";
+import Cookies from "js-cookie";
 
-export const useWebSocket = (userId: string) => { 
+
+export const useWebSocket = () => {
   const [isConnected, setIsConnected] = useState(false);
   const [onlineUsers, setOnlineUsers] = useState<User[]>([]);
-  const [messages, setMessages] = useState<Message[]>([]); 
-
+  const [messages, setMessages] = useState<Message[]>([]);
   const wsRef = useRef<WebSocket | null>(null);
 
+  const token = Cookies.get("token");
+
   useEffect(() => {
-    if (!userId) return; 
+    if (!token) return; 
 
     const url = process.env.NEXT_PUBLIC_WS_URL;
-    const wsUrl = `${url}${userId}`;
+    const wsUrl = `${url}?token=${token}`; 
     wsRef.current = new WebSocket(wsUrl);
 
     wsRef.current.onopen = () => {
-      console.log(`WebSocket connected for user ${userId}`);
+      console.log("WebSocket connected");
       setIsConnected(true);
-      // Request online users on connection
       wsRef.current?.send(JSON.stringify({ action: "get_online_users" }));
     };
 
     wsRef.current.onmessage = (event: MessageEvent) => {
       const data: WebSocketMessage = JSON.parse(event.data);
-      
+
       if (data.type === "online_users" && data.data?.users) {
-        setOnlineUsers(data.data.users); 
-      } 
-      else if (data.type === "status" && data.data?.user_id && data.data?.status) {
+        setOnlineUsers(data.data.users);
+      } else if (data.type === "status" && data.data?.user_id && data.data?.status) {
         setOnlineUsers((prev) => {
           if (data.data?.status === "online") {
             const existing = prev.find((u) => u.id === data.data?.user_id);
@@ -39,15 +41,12 @@ export const useWebSocket = (userId: string) => {
             return prev.map((u) =>
               u.id === data.data?.user_id ? { ...u, status: "online" } : u
             );
-          } 
-          else if (data.data?.status === "offline") {
+          } else if (data.data?.status === "offline") {
             return prev.filter((u) => u.id !== data.data?.user_id);
           }
           return prev;
         });
-      } 
-      else if (data.type === "message" && data.data) {
-        // Handle incoming chat messages
+      } else if (data.type === "message" && data.data) {
         setMessages((prev) => [...prev, data.data as Message]);
       }
     };
@@ -57,20 +56,18 @@ export const useWebSocket = (userId: string) => {
       setIsConnected(false);
     };
 
-    wsRef.current.onclose = () => {
-      console.log("WebSocket disconnected");
-      setIsConnected(false);
-    };
+    // wsRef.current.onclose = () => {
+    //   console.log("WebSocket disconnected");
+    //   setIsConnected(false);
+    // };
 
-    // Cleanup on unmount or userId change
     return () => {
       if (wsRef.current) {
         wsRef.current.close();
       }
     };
-  }, [userId]);
+  }, [token]); 
 
-  // Function to send messages with type safety
   const sendMessage = (message: { action: string; [key: string]: any }) => {
     if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
       wsRef.current.send(JSON.stringify(message));

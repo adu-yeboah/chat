@@ -19,7 +19,7 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
   const router = useRouter();
 
   const { isConnected, onlineUsers, messages, sendMessage } = useWebSocket(user?.id as string);
-
+    
   const handleError = (err: any) => {
     if (err.response && err.response.data && err.response.data.detail) {
       setError(err.response.data.detail);
